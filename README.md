@@ -21,6 +21,23 @@ A full-stack expense tracker application built using the MERN stack (MongoDB, Ex
 - **MongoDB:** Database for storing user data and expenses.
 - **Passport.js:** For user authentication and session management.
 
+## Screenshots
+
+Here are some screenshots of the ExpenseTracker project:
+
+### Homepage
+![Signup](./frontend/screenshots/SignupPage.png)
+
+### Sign Up
+![Login](./frontend/screenshots/SignupPage.png)
+
+### Login
+![Expense](./frontend/screenshots/ExpenseChart.png)
+
+### Courses
+![History](./frontend/screenshots/History.png)
+
+
 ## Installation
 
 1. Clone the repository:
