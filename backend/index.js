@@ -56,6 +56,15 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Global CORS middleware
+app.use(cors({
+	origin: [
+		process.env.FRONTEND_URL || "http://localhost:3000",
+		"https://expense-tracker-w8v3.vercel.app"
+	],
+	credentials: true,
+}));
+
 const server = new ApolloServer({
 	typeDefs: mergedTypeDefs,
 	resolvers: mergedResolvers,
@@ -70,7 +79,10 @@ await server.start();
 app.use(
 	"/graphql",
 	cors({
-		origin: process.env.FRONTEND_URL || "http://localhost:3000",
+		origin: [
+			process.env.FRONTEND_URL || "http://localhost:3000",
+			"https://expense-tracker-w8v3.vercel.app"
+		],
 		credentials: true,
 	}),
 	express.json(),
