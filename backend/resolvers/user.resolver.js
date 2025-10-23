@@ -49,6 +49,20 @@ const userResolver = {
 				await context.login(user);
 				console.log("User logged in successfully:", user.username);
 				console.log("Session after login:", context.req.session);
+				
+				// Manually save the session and set cookie
+				context.req.session.save((err) => {
+					if (err) {
+						console.error("Session save error:", err);
+					} else {
+						console.log("Session saved successfully");
+						// Manually set the session cookie
+						const sessionCookie = `connect.sid=${context.req.sessionID}`;
+						context.res.setHeader('Set-Cookie', sessionCookie + '; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=604800');
+						console.log("Session cookie set manually:", sessionCookie);
+					}
+				});
+				
 				console.log("Response headers being set:", context.res.getHeaders());
 				return user;
 			} catch (err) {

@@ -84,6 +84,15 @@ await server.start();
 
 // Set up our Express middleware to handle CORS, body parsing,
 // and our expressMiddleware function.
+// Add a middleware to ensure session is saved
+app.use((req, res, next) => {
+	// Ensure session is saved after each request
+	req.session.save((err) => {
+		if (err) console.error("Session save error:", err);
+	});
+	next();
+});
+
 app.use(
 	"/graphql",
 	cors({
@@ -104,6 +113,16 @@ app.use(
 			console.log("Session data:", req.session);
 			console.log("Cookies received:", req.headers.cookie);
 			console.log("Request origin:", req.headers.origin);
+			console.log("Response headers before:", res.getHeaders());
+			
+			// Ensure session is saved after login
+			if (req.session && req.session.passport && req.session.passport.user) {
+				req.session.save((err) => {
+					if (err) console.error("Session save error:", err);
+					else console.log("Session saved successfully");
+				});
+			}
+			
 			return buildContext({ req, res });
 		},
 	})
