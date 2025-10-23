@@ -13,13 +13,33 @@ const TransactionForm = () => {
 
 		const form = e.target;
 		const formData = new FormData(form);
+		
+		// Get form values
+		const description = formData.get("description");
+		const paymentType = formData.get("paymentType");
+		const category = formData.get("category");
+		const amount = formData.get("amount");
+		const location = formData.get("location");
+		const date = formData.get("date");
+
+		// Client-side validation
+		if (!description || !paymentType || !category || !amount || !date) {
+			toast.error("Please fill in all required fields");
+			return;
+		}
+
+		if (parseFloat(amount) <= 0) {
+			toast.error("Amount must be greater than 0");
+			return;
+		}
+
 		const transactionData = {
-			description: formData.get("description"),
-			paymentType: formData.get("paymentType"),
-			category: formData.get("category"),
-			amount: parseFloat(formData.get("amount")),
-			location: formData.get("location"),
-			date: formData.get("date"),
+			description,
+			paymentType,
+			category,
+			amount: parseFloat(amount),
+			location: location || null,
+			date,
 		};
 
 		try {
@@ -155,6 +175,8 @@ const TransactionForm = () => {
 						type='date'
 						name='date'
 						id='date'
+						required
+						defaultValue={new Date().toISOString().split('T')[0]}
 						className='appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-[11px] px-4 mb-3 leading-tight focus:outline-none
 						 focus:bg-white'
 						placeholder='Select date'
