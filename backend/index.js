@@ -70,7 +70,9 @@ await server.start();
 app.use(
 	"/graphql",
 	cors({
-		origin: "http://localhost:3000",
+		origin: process.env.NODE_ENV === "production" 
+			? [process.env.FRONTEND_URL, "https://your-frontend-domain.vercel.app"] // Replace with your Vercel domain
+			: "http://localhost:3000",
 		credentials: true,
 	}),
 	express.json(),
