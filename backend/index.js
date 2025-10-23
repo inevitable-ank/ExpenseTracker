@@ -38,7 +38,20 @@ const store = new MongoDBStore({
 	collection: "sessions",
 });
 
-store.on("error", (err) => console.log(err));
+store.on("error", (err) => {
+	console.error("MongoDB session store error:", err);
+});
+
+// Wait for store to be ready
+store.on("connected", () => {
+	console.log("MongoDB session store connected");
+});
+
+// Determine if we're in production based on the URL or environment
+const isProduction = process.env.NODE_ENV === 'production' || process.env.PORT;
+console.log("Environment:", process.env.NODE_ENV);
+console.log("Is Production:", isProduction);
+console.log("Session Secret exists:", !!process.env.SESSION_SECRET);
 
 app.use(
 	session({
@@ -48,6 +61,8 @@ app.use(
 		cookie: {
 			maxAge: 1000 * 60 * 60 * 24 * 7,
 			httpOnly: true, // this option prevents the Cross-Site Scripting (XSS) attacks
+			secure: isProduction, // Only use secure cookies in production
+			sameSite: isProduction ? 'none' : 'lax', // Allow cross-origin cookies in production
 		},
 		store: store,
 	})
@@ -56,14 +71,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Global CORS middleware
-app.use(cors({
-	origin: [
-		process.env.FRONTEND_URL || "http://localhost:3000",
-		"https://expense-tracker-w8v3.vercel.app"
-	],
-	credentials: true,
-}));
 
 const server = new ApolloServer({
 	typeDefs: mergedTypeDefs,
@@ -89,7 +96,13 @@ app.use(
 	// expressMiddleware accepts the same arguments:
 	// an Apollo Server instance and optional configuration options
 	expressMiddleware(server, {
-		context: async ({ req, res }) => buildContext({ req, res }),
+		context: async ({ req, res }) => {
+			// Add debugging for session
+			console.log("Session ID:", req.sessionID);
+			console.log("User in session:", req.user);
+			console.log("Session data:", req.session);
+			return buildContext({ req, res });
+		},
 	})
 );
 

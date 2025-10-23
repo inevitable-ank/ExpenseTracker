@@ -47,6 +47,8 @@ const userResolver = {
 				const { user } = await context.authenticate("graphql-local", { username, password });
 
 				await context.login(user);
+				console.log("User logged in successfully:", user.username);
+				console.log("Session after login:", context.req.session);
 				return user;
 			} catch (err) {
 				console.error("Error in login:", err);
@@ -72,6 +74,8 @@ const userResolver = {
 		authUser: async (_, __, context) => {
 			try {
 				const user = await context.getUser();
+				console.log("AuthUser query - User found:", user ? user.username : "No user");
+				console.log("AuthUser query - Session:", context.req.session);
 				return user;
 			} catch (err) {
 				console.error("Error in authUser: ", err);
