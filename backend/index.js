@@ -70,9 +70,7 @@ await server.start();
 app.use(
 	"/graphql",
 	cors({
-		origin: process.env.NODE_ENV === "production" 
-			? false // No CORS needed in production since frontend is served from same domain
-			: "http://localhost:3000",
+		origin: process.env.FRONTEND_URL || "http://localhost:3000",
 		credentials: true,
 	}),
 	express.json(),
@@ -83,15 +81,14 @@ app.use(
 	})
 );
 
-// npm run build will build your frontend app, and it will the optimized version of your app
-app.use(express.static(path.join(__dirname, "frontend/dist")));
-
-app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname, "frontend/dist", "index.html"));
+// Health check endpoint
+app.get("/health", (req, res) => {
+	res.json({ status: "OK", message: "Backend server is running" });
 });
 
 // Modified server startup
-await new Promise((resolve) => httpServer.listen({ port: 5000 }, resolve));
+const PORT = process.env.PORT || 5000;
+await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
 await connectDB();
 
-console.log(`🚀 Server ready at http://localhost:5000/graphql`);
+console.log(`🚀 Server ready at http://localhost:${PORT}/graphql`);

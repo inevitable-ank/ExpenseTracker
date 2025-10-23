@@ -1,92 +1,130 @@
-# MERN GraphQL Expense Tracker
+# Expense Tracker
 
-A full-stack expense tracker application built using the MERN stack (MongoDB, Express.js, React.js, Node.js) with Apollo GraphQL for data management and queries. This application allows users to manage their expenses securely with authentication, real-time updates, and error handling on both server and client sides.
+A full-stack expense tracking application built with React, GraphQL, and Node.js.
 
-## Features
-- **MERN Stack:** Built using MongoDB, Express.js, React.js, and Node.js.
-- **GraphQL with Apollo:** Utilizes Apollo Client for state management and queries with a GraphQL API.
-- **Authentication:** User authentication with Passport.js, storing sessions in MongoDB.
-- **Error Handling:** Comprehensive error handling on both the client and server.
-- **Cron Jobs:** Automates tasks and schedules operations via cron jobs.
-- **Global State Management:** Handles global app state with Apollo Client.
+## Project Structure
 
-## Tech Stack
-### Frontend
-- **React.js:** For the user interface and component structure.
-- **Apollo Client:** To manage global state and handle GraphQL queries and mutations.
+```
+expense-tracker/
+├── backend/          # Backend API (GraphQL + Express)
+├── frontend/         # React frontend application
+├── package.json      # Root package.json for managing both projects
+└── README.md
+```
+
+## Quick Start
+
+### Prerequisites
+- Node.js (v16 or higher)
+- MongoDB database
+- npm or yarn
+
+### Installation
+
+1. **Install all dependencies:**
+   ```bash
+   npm run install:all
+   ```
+
+2. **Set up environment variables:**
+   
+   **Backend** (`backend/env.example` → `backend/.env`):
+   ```env
+   MONGO_URI=your_mongodb_connection_string
+   SESSION_SECRET=your_session_secret
+   NODE_ENV=development
+   PORT=5000
+   FRONTEND_URL=http://localhost:3000
+   ```
+   
+   **Frontend** (`frontend/env.example` → `frontend/.env`):
+   ```env
+   VITE_NODE_ENV=development
+   VITE_GRAPHQL_URL=http://localhost:5000/graphql
+   ```
+
+### Development
+
+**Run both frontend and backend:**
+```bash
+npm run dev
+```
+
+**Run individually:**
+```bash
+# Backend only
+npm run dev:backend
+
+# Frontend only  
+npm run dev:frontend
+```
+
+### Production
+
+**Build frontend:**
+```bash
+npm run build:frontend
+```
+
+**Start backend:**
+```bash
+npm run start:backend
+```
+
+## Deployment
+
+### Backend (Railway)
+1. Connect your GitHub repository to Railway
+2. Set environment variables in Railway dashboard
+3. Deploy automatically on push to main branch
+
+### Frontend (Vercel)
+1. Connect your GitHub repository to Vercel
+2. Set build command: `npm run build:frontend`
+3. Set output directory: `frontend/dist`
+4. Set environment variables in Vercel dashboard
+
+## Environment Variables
 
 ### Backend
-- **Node.js & Express.js:** Server-side framework and routing.
-- **GraphQL & Apollo Server:** For API endpoints, queries, and mutations.
-- **MongoDB:** Database for storing user data and expenses.
-- **Passport.js:** For user authentication and session management.
+- `MONGO_URI`: MongoDB connection string
+- `SESSION_SECRET`: Secret for session encryption
+- `NODE_ENV`: Environment (development/production)
+- `PORT`: Server port (default: 5000)
+- `FRONTEND_URL`: Frontend URL for CORS
 
-## Screenshots
+### Frontend
+- `VITE_NODE_ENV`: Environment (development/production)
+- `VITE_GRAPHQL_URL`: Backend GraphQL endpoint URL
 
-Here are some screenshots of the ExpenseTracker project:
+## API Endpoints
 
-### Homepage
-![Signup](./frontend/screenshots/SignupPage.png)
+- `GET /health` - Health check
+- `POST /graphql` - GraphQL endpoint
 
-### Sign Up
-![Login](./frontend/screenshots/SignupPage.png)
+## Technologies Used
 
-### Login
-![Expense](./frontend/screenshots/ExpenseChart.png)
+### Backend
+- Node.js
+- Express
+- Apollo Server (GraphQL)
+- MongoDB with Mongoose
+- Passport.js (Authentication)
+- Express Session
 
-### Courses
-![History](./frontend/screenshots/History.png)
-
-
-## Installation
-
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/inevitable-ank/graphql-expense-tracker.git
-    cd graphql-expense-tracker
-    ```
-
-2. Install dependencies:
-    ```bash
-    npm build
-    ```
-
-3. Set up environment variables:
-    Create a `.env` file in the root directory and add the following environment variables:
-    ```bash
-    MONGO_URI=your-mongodb-uri
-    SESSION_SECRET=your-secret-key
-    NODE_ENV=development
-    PORT=4000
-    ```
-
-4. Start the backend:
-    ```bash
-    npm start
-    ```
-
-5. Start the frontend (in a separate terminal):
-    ```bash
-    cd frontend
-    npm start
-    ```
-
-## Usage
-1. Sign up or log in to the application.
-2. Add, edit, or delete expenses from your dashboard.
-3. View and manage all your expenses with real-time updates.
-4. The app schedules tasks like expense summary reports using cron jobs.
-
-## Error Handling
-Both server and client sides feature robust error handling mechanisms. The app returns user-friendly error messages and handles system failures gracefully.
-
-## Future Improvements
-- Add unit and integration tests.
-- Enhance user experience with additional filtering and sorting options.
-- Add support for multiple currencies.
+### Frontend
+- React
+- Vite
+- Apollo Client
+- Tailwind CSS
+- React Router
+- Chart.js
+- Framer Motion
 
 ## Contributing
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
-## License
-This project is licensed under the MIT License.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
