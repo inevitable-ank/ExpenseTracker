@@ -71,7 +71,7 @@ app.use(
 	"/graphql",
 	cors({
 		origin: process.env.NODE_ENV === "production" 
-			? [process.env.FRONTEND_URL, "https://your-frontend-domain.vercel.app"] // Replace with your Vercel domain
+			? false // No CORS needed in production since frontend is served from same domain
 			: "http://localhost:3000",
 		credentials: true,
 	}),
