@@ -49,6 +49,7 @@ const userResolver = {
 				await context.login(user);
 				console.log("User logged in successfully:", user.username);
 				console.log("Session after login:", context.req.session);
+				console.log("Response headers being set:", context.res.getHeaders());
 				return user;
 			} catch (err) {
 				console.error("Error in login:", err);

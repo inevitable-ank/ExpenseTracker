@@ -65,6 +65,7 @@ app.use(
 			sameSite: isProduction ? 'none' : 'lax', // Allow cross-origin cookies in production
 		},
 		store: store,
+		name: 'connect.sid', // Explicitly set session cookie name
 	})
 );
 
@@ -101,6 +102,8 @@ app.use(
 			console.log("Session ID:", req.sessionID);
 			console.log("User in session:", req.user);
 			console.log("Session data:", req.session);
+			console.log("Cookies received:", req.headers.cookie);
+			console.log("Request origin:", req.headers.origin);
 			return buildContext({ req, res });
 		},
 	})
