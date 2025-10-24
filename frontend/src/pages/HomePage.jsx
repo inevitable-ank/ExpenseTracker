@@ -42,7 +42,7 @@ const HomePage = () => {
 		labels: [],
 		datasets: [
 			{
-				label: "$",
+				label: "₹",
 				data: [],
 				backgroundColor: [],
 				borderColor: [],
