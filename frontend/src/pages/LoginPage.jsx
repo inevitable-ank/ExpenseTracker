@@ -1,19 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import InputField from "../components/InputField";
-import { useMutation } from "@apollo/client";
+import { useMutation, useApolloClient } from "@apollo/client";
 import { LOGIN } from "../graphql/mutations/user.mutation";
 import toast from "react-hot-toast";
 
 const LoginPage = () => {
+	const navigate = useNavigate();
+	const client = useApolloClient();
 	const [loginData, setLoginData] = useState({
 		username: "",
 		password: "",
 	});
 
-	const [login, { loading }] = useMutation(LOGIN, {
-		refetchQueries: ["GetAuthenticatedUser"],
-	});
+	const [login, { loading }] = useMutation(LOGIN);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -27,7 +27,20 @@ const LoginPage = () => {
 		e.preventDefault();
 		if (!loginData.username || !loginData.password) return toast.error("Please fill in all fields");
 		try {
-			await login({ variables: { input: loginData } });
+			const result = await login({ variables: { input: loginData } });
+			
+			// Store JWT token in localStorage
+			if (result.data?.login?.token) {
+				localStorage.setItem('authToken', result.data.login.token);
+				console.log('Token stored in localStorage:', result.data.login.token);
+				
+				// Trigger storage event to update App.jsx
+				window.dispatchEvent(new Event('storage'));
+				
+				toast.success("Login successful!");
+				// Navigate to home page
+				navigate('/');
+			}
 		} catch (error) {
 			console.error("Error logging in:", error);
 			toast.error(error.message);

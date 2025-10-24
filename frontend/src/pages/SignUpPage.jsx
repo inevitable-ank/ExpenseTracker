@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import RadioButton from "../components/RadioButton";
 import InputField from "../components/InputField";
 import { useMutation } from "@apollo/client";
@@ -7,6 +7,7 @@ import { SIGN_UP } from "../graphql/mutations/user.mutation";
 import toast from "react-hot-toast";
 
 const SignUpPage = () => {
+	const navigate = useNavigate();
 	const [signUpData, setSignUpData] = useState({
 		name: "",
 		username: "",
@@ -14,18 +15,28 @@ const SignUpPage = () => {
 		gender: "",
 	});
 
-	const [signup, { loading }] = useMutation(SIGN_UP, {
-		refetchQueries: ["GetAuthenticatedUser"],
-	});
+	const [signup, { loading }] = useMutation(SIGN_UP);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			await signup({
+			const result = await signup({
 				variables: {
 					input: signUpData,
 				},
 			});
+			
+			// Store JWT token in localStorage
+			if (result.data?.signUp?.token) {
+				localStorage.setItem('authToken', result.data.signUp.token);
+				
+				// Trigger storage event to update App.jsx
+				window.dispatchEvent(new Event('storage'));
+				
+				toast.success("Sign up successful!");
+				// Navigate to home page
+				navigate('/');
+			}
 		} catch (error) {
 			console.error("Error:", error);
 			toast.error(error.message);
