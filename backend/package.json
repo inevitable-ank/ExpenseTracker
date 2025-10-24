@@ -9,7 +9,11 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"type": "module",
-	"keywords": ["expense-tracker", "graphql", "api"],
+	"keywords": [
+		"expense-tracker",
+		"graphql",
+		"api"
+	],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
@@ -24,6 +28,7 @@
 		"express-session": "^1.18.0",
 		"graphql": "^16.8.1",
 		"graphql-passport": "^0.6.8",
+		"jsonwebtoken": "^9.0.2",
 		"mongoose": "^8.2.0",
 		"passport": "^0.7.0"
 	},

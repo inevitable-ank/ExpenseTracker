@@ -1,6 +1,7 @@
 import Transaction from "../models/transaction.model.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import { generateToken } from "../utils/jwt.js";
 
 const userResolver = {
 	Mutation: {
@@ -32,8 +33,15 @@ const userResolver = {
 				});
 
 				await newUser.save();
-				await context.login(newUser);
-				return newUser;
+				
+				// Generate JWT token
+				const token = generateToken(newUser._id);
+				console.log("User signed up successfully:", newUser.username);
+				
+				return {
+					user: newUser,
+					token
+				};
 			} catch (err) {
 				console.error("Error in signUp: ", err);
 				throw new Error(err.message || "Internal server error");
@@ -44,27 +52,26 @@ const userResolver = {
 			try {
 				const { username, password } = input;
 				if (!username || !password) throw new Error("All fields are required");
-				const { user } = await context.authenticate("graphql-local", { username, password });
-
-				await context.login(user);
+				
+				// Find user and verify password
+				const user = await User.findOne({ username });
+				if (!user) {
+					throw new Error("Invalid username or password");
+				}
+				
+				const validPassword = await bcrypt.compare(password, user.password);
+				if (!validPassword) {
+					throw new Error("Invalid username or password");
+				}
+				
+				// Generate JWT token
+				const token = generateToken(user._id);
 				console.log("User logged in successfully:", user.username);
-				console.log("Session after login:", context.req.session);
 				
-				// Manually save the session and set cookie
-				context.req.session.save((err) => {
-					if (err) {
-						console.error("Session save error:", err);
-					} else {
-						console.log("Session saved successfully");
-						// Manually set the session cookie
-						const sessionCookie = `connect.sid=${context.req.sessionID}`;
-						context.res.setHeader('Set-Cookie', sessionCookie + '; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=604800');
-						console.log("Session cookie set manually:", sessionCookie);
-					}
-				});
-				
-				console.log("Response headers being set:", context.res.getHeaders());
-				return user;
+				return {
+					user,
+					token
+				};
 			} catch (err) {
 				console.error("Error in login:", err);
 				throw new Error(err.message || "Internal server error");
@@ -72,12 +79,7 @@ const userResolver = {
 		},
 		logout: async (_, __, context) => {
 			try {
-				await context.logout();
-				context.req.session.destroy((err) => {
-					if (err) throw err;
-				});
-				context.res.clearCookie("connect.sid");
-
+				// JWT logout is handled on frontend by removing token
 				return { message: "Logged out successfully" };
 			} catch (err) {
 				console.error("Error in logout:", err);
@@ -90,7 +92,6 @@ const userResolver = {
 			try {
 				const user = await context.getUser();
 				console.log("AuthUser query - User found:", user ? user.username : "No user");
-				console.log("AuthUser query - Session:", context.req.session);
 				return user;
 			} catch (err) {
 				console.error("Error in authUser: ", err);
